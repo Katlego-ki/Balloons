@@ -1,4 +1,4 @@
-package Algorithms.Games;
+//package Algorithms.Games;
 
 import java.util.Random;
 import java.util.Scanner;
