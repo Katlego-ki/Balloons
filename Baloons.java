@@ -9,8 +9,6 @@ public class Baloons {
     public static char baseSequence [] = {'B','G','R','Y'}; 
     public static char newBaloons [] = new char[4];
     public static Scanner getInput = new Scanner(System.in);
-    public static String baseSequence1 = "abcrfg";
-
 
     public static int[] randomIndices(){
 
@@ -39,16 +37,6 @@ public class Baloons {
         }
         return indices;
     }
-
-   //charAt was just used to check dynamic binding.
-   public char charAt(){
-
-        int i = randVariable.nextInt(4) ;
-        System.out.println(baseSequence1.charAt(i));
-
-
-    return newBaloons[i];
-   } 
 
    public static char[] generateBaloons(int[] indices){ 
 

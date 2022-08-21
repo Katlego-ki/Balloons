@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Random;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,22 +14,28 @@ public class BackEnd extends JPanel implements ActionListener {
     static final int HEIGHT = 800;
     static final int WIDTH = 800;
     static final int BALLOON_DIAMETER = 50; //OR change it to diameter!
-    static int balloonPos;
+    static int balloonPos = 0;
     static final int BOARD_SIZE = 256;
-    final  Timer timer = new Timer(0,this);
+    final Font font = new Font("TimesRoman",Font.BOLD,50);
 
+    final  Timer timer = new Timer(0,this);
+    public static Random randVariable = new Random();
+    
     boolean gameOver = false;
     boolean validInput = true;
-    String colourCode = null;
+    String colourCode = ""; //To complete constructor initial argurments
 
-    //Map<String, String > services = new HashMap<String, String>();
     static List<String> colourCodes = new ArrayList<String>();
+    static List<String> newState = new ArrayList<String>();
+    static List<String> baseCodes = new ArrayList<String>();
+
+    static int attemptsLeft = 0;
 
     public BackEnd() {
 
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT)); //SIZE OF PANEL OR "GAME SCREEN"
         this.setBackground(Color.DARK_GRAY);
-        this.setFocusable(true); //
+        this.setFocusable(true); 
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -66,83 +73,166 @@ public class BackEnd extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
 
-        //Paint light grey cirlces that shows balloon positions.
-        for(int i = 1; i <= 4; i++){
-            g.setColor(Color.LIGHT_GRAY);
-            g.fillOval(150*i,300,100,100);
-        }
+        if(!gameOver){
+            //Paint light grey cirlces that shows balloon positions.
+            for(int i = 1; i <= 4; i++){
+                g.setColor(Color.LIGHT_GRAY);
+                g.fillOval(150*i,300,100,100);
+            }
 
-        //Paint previously selected balloons.
-        for (int i = 1; i < balloonPos; i++){
-            switch (colourCodes.get(i-1)) {
+            //Paint previously selected balloons.
+            for (int i = 1; i < balloonPos; i++){
+                switch (colourCodes.get(i - 1)) {
+                    case "Blue":
+                        g.setColor(Color.BLUE);
+                        g.fillOval(150*i,300,100,100);
+                        break;
+                    case "Red":
+                        g.setColor(Color.RED);
+                        g.fillOval(150*i,300,100,100);
+                        break;
+                    case "Green":
+                        g.setColor(Color.GREEN);
+                        g.fillOval(150*i,300,100,100);
+                        break;
+                    case "Yellow":
+                        g.setColor(Color.YELLOW);
+                        g.fillOval(150*i,300,100,100);
+                        break;
+                    default:
+                        break;
+                }
+
+            } 
+            
+            //paint the current balloon.
+            switch (colourCode) {
                 case "Blue":
                     g.setColor(Color.BLUE);
-                    g.fillOval(150*i,300,100,100);
+                    g.fillOval(150*balloonPos,300,100,100);
+
                     break;
                 case "Red":
                     g.setColor(Color.RED);
-                    g.fillOval(150*i,300,100,100);
+                    g.fillOval(150*balloonPos,300,100,100);
                     break;
                 case "Green":
                     g.setColor(Color.GREEN);
-                    g.fillOval(150*i,300,100,100);
+                    g.fillOval(150*balloonPos,300,100,100);
                     break;
                 case "Yellow":
                     g.setColor(Color.YELLOW);
-                    g.fillOval(150*i,300,100,100);
+                    g.fillOval(150*balloonPos,300,100,100);
                     break;
                 default:
-                    break;
+
+                    break;   
             }
 
-            if(balloonPos == 3){
-                
-            }
-        }
+        }   else{
+                if(newState.equals(colourCodes)){
+                    //
+                    String scoreText = String.format("GAME OVER!");
+                    g.setColor(Color.BLACK);
+                    g.setFont(font);
+                    g.drawString(scoreText,(WIDTH - getFontMetrics(g.getFont()).stringWidth(scoreText))/2, HEIGHT/2);
 
-        //paint the current balloon.
-        switch (colourCode) {
-            case "Blue":
-                g.setColor(Color.BLUE);
-                g.fillOval(150*balloonPos,300,100,100);
+                }   else{
+                    //Print Game Over!, Press Enter to try again or X to Exit.
+                    String scoreText = String.format("GAME OVER!");
+                    g.setColor(Color.BLACK);
+                    g.setFont(font);
+                    g.drawString(scoreText,(WIDTH - getFontMetrics(g.getFont()).stringWidth(scoreText))/2, HEIGHT/2);
 
-                break;
-            case "Red":
-                g.setColor(Color.RED);
-                g.fillOval(150*balloonPos,300,100,100);
-                break;
-            case "Green":
-                g.setColor(Color.GREEN);
-                g.fillOval(150*balloonPos,300,100,100);
-                break;
-            case "Yellow":
-                g.setColor(Color.YELLOW);
-                g.fillOval(150*balloonPos,300,100,100);
-                break;
-            default:
-
-                break;
-            
-        }
+                   // gameOver = true;
+                }  
+            }  
     }
 
-    //Specifies the position of the current balloon to be painted.
-    public void balloonAt(){
-        balloonPos = colourCodes.size();
-        if(balloonPos == 4){
-            gameOver = true;
+    public static int[] randomIndices(){
+
+        int [] indices = new int[4];
+        int i = 0;
+
+        for(int k = 0; k < indices.length; k++){
+
+            indices[k] = randVariable.nextInt(2);
+            i = 0;
+
+            while(i < indices.length){ 
+                if(indices[k] == indices[i] && k > i){
+                    if(indices[k] + 1 < indices.length){
+                        indices[k] += 1 ; 
+                    }
+                    else{
+                        indices[k] = indices.length - indices[k] - 1;
+                    }
+                    i = 0;
+                }
+                else{
+                    i++;
+                }
+            }
+        }
+        return indices;
+    }
+
+   public static List<String> generateBaloons(int[] indices){ 
+
+        for (int i = 0; i < newState.size(); i++){
+            newState.add(baseCodes.get(indices[i])); //= baseSequence[indices[i]];
+        }
+
+        return newState;
+   }
+
+    public void newGame(){
+        baseCodes.add("Blue");
+        baseCodes.add("Red");
+        baseCodes.add("Green");
+        baseCodes.add("Yellow");
+        baseCodes.add("Orange");
+
+        //attemptsLeft = 3; //Will be changed to "newState.size() - 1"
+        newState = generateBaloons(randomIndices());
+        gameOver = false;
+
+    }
+
+    public void nextAttempt(){
+        attemptsLeft--;
+        if(attemptsLeft < 1){
+            gameOver = true; 
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e){ //Equivalent to main() in C++ i.e "entry point"
+
+        //for now only executes at the beginning.
+        if(attemptsLeft == 0){
+            attemptsLeft = 2;
+            baseCodes.clear();
+            newGame();
+        }   
+
         if(!gameOver && validInput){
 
             colourCodes.add(colourCode);
-            balloonAt();
+            balloonPos++;
             repaint();  //calling paintComponent()!
             timer.stop();
-        }
+
+            if(balloonPos == 5){
+
+                colourCodes.clear(); //Try again after failed attempt.
+                nextAttempt();
+                newGame();
+                repaint();
+                timer.stop();
+                
+            }
             
+        }
     }
 }
