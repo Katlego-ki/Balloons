@@ -15,9 +15,8 @@ public class BackEnd extends JPanel implements ActionListener {
     static final int WIDTH = 800;
     static int balloonPosX = 100;
     static int balloonPosY = 300;
-    static final int BOARD_SIZE = 256;
 
-    final  Timer timer = new Timer(300,this);
+    final  Timer timer = new Timer(0,this);
     public static Random randVariable = new Random();
 
     boolean gameOver = false;
@@ -28,7 +27,7 @@ public class BackEnd extends JPanel implements ActionListener {
     static List<String> newState = new ArrayList<>();
     static List<String> baseCodes = new ArrayList<>();
 
-    static int attemptsLeft = 2;
+    static int attemptsLeft = 3;
 
     public BackEnd() {
 
@@ -79,7 +78,7 @@ public class BackEnd extends JPanel implements ActionListener {
         }
 
         if(!gameOver && (colourCodes.size() > 0)){
-            
+
             //Paint previously selected balloons.
             for (int i = 1; i < balloonPosX; i++){
                 switch (colourCodes.get(i-1)) {
@@ -133,24 +132,59 @@ public class BackEnd extends JPanel implements ActionListener {
 
                 g.setColor(Color.BLACK);
 
-                if(attemptsLeft > 0){
-                    String userNotice = String.format("Attempts left : %d", attemptsLeft);
-                    String pressKey = "(press 'B' to begin your next attempt)";
+                if((attemptsLeft > 0) || (colourCodes.equals(newState))){
 
-                    g.setFont(new Font("TimesRoman",Font.BOLD,50));
-                    g.drawString(userNotice,(WIDTH - getFontMetrics(g.getFont()).stringWidth(userNotice))/2, 100 + HEIGHT/2 );
-                    g.setFont(new Font("TimesRoman",Font.ITALIC,25));
-                    g.drawString(pressKey,(WIDTH - getFontMetrics(g.getFont()).stringWidth(pressKey))/2, 150 + HEIGHT/2 );
+                    if(colourCodes.equals(newState)){
+                        String youWon = "You Won!";
+
+                        g.setColor(Color.GREEN);
+                        g.setFont(new Font("Arial", Font.BOLD, 50));
+                        g.drawString(youWon, (WIDTH - getFontMetrics(g.getFont()).stringWidth(youWon)) / 2, HEIGHT / 3);
+
+
+                    } else {
+
+                        //for() loop for drawing black and white balloons to show which colours were guessed correctly.
+                        for(int i = 0; i < colourCodes.size(); i++){
+                            if(colourCodes.get(i).equals(newState.get(i))){
+                                g.setColor(Color.WHITE);
+                                g.fillOval(150*(i+1),balloonPosY,20,20);
+                            } else{
+                                g.setColor(Color.BLACK);
+                                g.fillOval(150*(i+1),balloonPosY,20,20);
+                            }
+                        }
+
+                        String userNotice = String.format("Attempts left : %d", attemptsLeft);
+                        String pressKey = "(press 'B' to begin your next attempt)";
+
+                        g.setFont(new Font("TimesRoman", Font.BOLD, 50));
+                        g.drawString(userNotice, (WIDTH - getFontMetrics(g.getFont()).stringWidth(userNotice)) / 2, 100 + HEIGHT / 2);
+                        g.setFont(new Font("TimesRoman", Font.ITALIC, 25));
+                        g.drawString(pressKey, (WIDTH - getFontMetrics(g.getFont()).stringWidth(pressKey)) / 2, 150 + HEIGHT / 2);
+                    }
 
                 } else{
                     gameOver = true;
-                    String userNotice1 = "GAME OVER!";
+                    String youLost = "GAME OVER!";
                     g.setFont(new Font("TimesRoman",Font.BOLD,50));
-                    g.drawString(userNotice1,(WIDTH - getFontMetrics(g.getFont()).stringWidth(userNotice1))/2, 100 + HEIGHT/2 );
+                    g.drawString(youLost,(WIDTH - getFontMetrics(g.getFont()).stringWidth(youLost))/2, 100 + HEIGHT/2 );
+
+                    //for() loop for drawing black and white balloons to show which colours were guessed correctly.
+                    for(int i = 0; i < colourCodes.size(); i++){
+                        if(colourCodes.get(i).equals(newState.get(i))){
+                            g.setColor(Color.WHITE);
+                            g.fillOval(150*(i+1),balloonPosY,20,20);
+                        } else{
+                            g.setColor(Color.BLACK);
+                            g.fillOval(150*(i+1),balloonPosY,20,20);
+                        }
+                    }
                 }
-                
+
+                colourCodes.clear();
             }
-        }   
+        }
     }
 
     public static int[] randomIndices(){
@@ -181,13 +215,11 @@ public class BackEnd extends JPanel implements ActionListener {
         return indices;
     }
 
-    public static List<String> generateBalloons(int[] indices){
+    public static void generateBalloons(int[] indices){
 
-        for (int i = 0; i < newState.size(); i++){
-            newState.add(baseCodes.get(indices[i])); //= baseSequence[indices[i]];
+        for (int i = 0; i < baseCodes.size() - 1; i++){
+            newState.add(baseCodes.get(indices[i]));
         }
-
-        return newState;
     }
 
     // newGame not used for now!
@@ -198,18 +230,21 @@ public class BackEnd extends JPanel implements ActionListener {
         baseCodes.add("Yellow");
         baseCodes.add("Orange");
 
-        attemptsLeft = 2; //Will be changed to "newState.size() - 1"
-        newState = generateBalloons(randomIndices());
-        gameOver = false;
-
+        newState.clear();
+        generateBalloons(randomIndices());
     }
 
     //Specifies the position of the current balloon to be painted.
     public void balloonAt(){
         balloonPosX = colourCodes.size();
-        if(balloonPosX == 5){
+        if(attemptsLeft == 3){
+            baseCodes.clear();
+            newGame();
+        }
+
+        if(balloonPosX == 4){
             repaint();
-            colourCodes.clear(); //Try again after failed attempt.
+            //colourCodes.clear(); //Try again after failed attempt.
             attemptsLeft--;
 
         }
@@ -218,11 +253,11 @@ public class BackEnd extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e){ //Equivalent to main() in C++ i.e "entry point"
 
-        // if(attemptsLeft == 0){
-            
-        //     newGame();
-        // }
-
+        if((balloonPosX == 4) && (colourCode == "Blue")){
+            repaint();
+            validInput = false;
+            balloonPosX = 0;
+        }
         if(!gameOver && validInput){
 
             colourCodes.add(colourCode);
