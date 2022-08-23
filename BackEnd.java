@@ -17,13 +17,14 @@ public class BackEnd extends JPanel implements ActionListener {
     static int balloonPos;
     static final int BOARD_SIZE = 256;
     final Font font = new Font("TimesRoman",Font.BOLD,50);
+    static String userNotice;
 
     final  Timer timer = new Timer(0,this);
     public static Random randVariable = new Random();
 
     boolean gameOver = false;
     boolean validInput = true;
-    String colourCode = ""; //To complete constructor initial arguments
+    String colourCode = ""; //To complete constructor initial arguments.
 
     static List<String> colourCodes = new ArrayList<String>();
     static List<String> newState = new ArrayList<String>();
@@ -129,22 +130,25 @@ public class BackEnd extends JPanel implements ActionListener {
                     break;
             }
 
-        }   else{
-            if(attemptsLeft != 0){
-                //print "You have X attempts left"
+            if(balloonPos == 4){
 
-            }   else if((attemptsLeft != 0) && (newState.equals(colourCodes))){
-                //print You Won, press Enter to play again or X to exit the game.
-            }   else{
-                //Print Game Over!, Press Enter to try again or X to Exit.
-                String scoreText = String.format("GAME OVER!");
+                //super.paint(g); //clear the screen!
                 g.setColor(Color.BLACK);
                 g.setFont(font);
-                g.drawString(scoreText,(WIDTH - getFontMetrics(g.getFont()).stringWidth(scoreText))/2, HEIGHT/2);
 
-                gameOver = true;
+                if(attemptsLeft != 1){
+                    userNotice = String.format("You have %d attempts left", attemptsLeft);
+                    g.drawString(userNotice,(WIDTH - getFontMetrics(g.getFont()).stringWidth(userNotice))/2, 100 + HEIGHT/2 );
+
+                } else{
+                    gameOver = true;
+                    userNotice = String.format("GAME OVER!");
+                    g.drawString(userNotice,(WIDTH - getFontMetrics(g.getFont()).stringWidth(userNotice))/2, 100 + HEIGHT/2 );
+                }
+                
+                
             }
-        }
+        }   
     }
 
     public static int[] randomIndices(){
