@@ -14,23 +14,23 @@ public class BackEnd extends JPanel implements ActionListener {
     static final int HEIGHT = 800;
     static final int WIDTH = 800;
     static final int BALLOON_DIAMETER = 50; //OR change it to diameter!
-    static int balloonPos;
+    static int balloonPosX = 100;
+    static int balloonPosY = 200;
     static final int BOARD_SIZE = 256;
     final Font font = new Font("TimesRoman",Font.BOLD,50);
-    static String userNotice;
 
-    final  Timer timer = new Timer(0,this);
+    final  Timer timer = new Timer(300,this);
     public static Random randVariable = new Random();
 
     boolean gameOver = false;
     boolean validInput = true;
     String colourCode = ""; //To complete constructor initial arguments.
 
-    static List<String> colourCodes = new ArrayList<String>();
-    static List<String> newState = new ArrayList<String>();
-    static List<String> baseCodes = new ArrayList<String>();
+    static List<String> colourCodes = new ArrayList<>();
+    static List<String> newState = new ArrayList<>();
+    static List<String> baseCodes = new ArrayList<>();
 
-    static int attemptsLeft = 0;
+    static int attemptsLeft = 2;
 
     public BackEnd() {
 
@@ -74,31 +74,31 @@ public class BackEnd extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
 
-        if(!gameOver){
+        if(!gameOver && (colourCodes.size() > 0)){
             //Paint light grey circles that shows balloon positions.
             for(int i = 1; i <= 4; i++){
                 g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(150*i,300,100,100);
+                g.fillOval(150*i,balloonPosY,100,100);
             }
 
             //Paint previously selected balloons.
-            for (int i = 1; i < balloonPos; i++){
+            for (int i = 1; i < balloonPosX; i++){
                 switch (colourCodes.get(i-1)) {
                     case "Blue":
                         g.setColor(Color.BLUE);
-                        g.fillOval(150*i,300,100,100);
+                        g.fillOval(150*i,balloonPosY,100,100);
                         break;
                     case "Red":
                         g.setColor(Color.RED);
-                        g.fillOval(150*i,300,100,100);
+                        g.fillOval(150*i,balloonPosY,100,100);
                         break;
                     case "Green":
                         g.setColor(Color.GREEN);
-                        g.fillOval(150*i,300,100,100);
+                        g.fillOval(150*i,balloonPosY,100,100);
                         break;
                     case "Yellow":
                         g.setColor(Color.YELLOW);
-                        g.fillOval(150*i,300,100,100);
+                        g.fillOval(150*i,balloonPosY,100,100);
                         break;
                     default:
                         break;
@@ -110,42 +110,41 @@ public class BackEnd extends JPanel implements ActionListener {
             switch (colourCode) {
                 case "Blue":
                     g.setColor(Color.BLUE);
-                    g.fillOval(150*balloonPos,300,100,100);
+                    g.fillOval(150*balloonPosX,balloonPosY,100,100);
 
                     break;
                 case "Red":
                     g.setColor(Color.RED);
-                    g.fillOval(150*balloonPos,300,100,100);
+                    g.fillOval(150*balloonPosX,balloonPosY,100,100);
                     break;
                 case "Green":
                     g.setColor(Color.GREEN);
-                    g.fillOval(150*balloonPos,300,100,100);
+                    g.fillOval(150*balloonPosX,balloonPosY,100,100);
                     break;
                 case "Yellow":
                     g.setColor(Color.YELLOW);
-                    g.fillOval(150*balloonPos,300,100,100);
+                    g.fillOval(150*balloonPosX,balloonPosY,100,100);
                     break;
                 default:
 
                     break;
             }
 
-            if(balloonPos == 4){
+            if(balloonPosX == 4){
 
-                //super.paint(g); //clear the screen!
+                balloonPosY += 100;
                 g.setColor(Color.BLACK);
                 g.setFont(font);
 
-                if(attemptsLeft != 1){
-                    userNotice = String.format("You have %d attempts left", attemptsLeft);
+                if(attemptsLeft > 0){
+                    String userNotice = String.format("You have %d attempts left", attemptsLeft);
                     g.drawString(userNotice,(WIDTH - getFontMetrics(g.getFont()).stringWidth(userNotice))/2, 100 + HEIGHT/2 );
-
+                    
                 } else{
                     gameOver = true;
-                    userNotice = String.format("GAME OVER!");
-                    g.drawString(userNotice,(WIDTH - getFontMetrics(g.getFont()).stringWidth(userNotice))/2, 100 + HEIGHT/2 );
+                    String userNotice1 = "GAME OVER!";
+                    g.drawString(userNotice1,(WIDTH - getFontMetrics(g.getFont()).stringWidth(userNotice1))/2, 100 + HEIGHT/2 );
                 }
-                
                 
             }
         }   
@@ -154,7 +153,7 @@ public class BackEnd extends JPanel implements ActionListener {
     public static int[] randomIndices(){
 
         int [] indices = new int[4];
-        int i = 0;
+        int i;
 
         for(int k = 0; k < indices.length; k++){
 
@@ -188,6 +187,7 @@ public class BackEnd extends JPanel implements ActionListener {
         return newState;
     }
 
+    // newGame not used for now!
     public void newGame(){
         baseCodes.add("Blue");
         baseCodes.add("Red");
@@ -195,7 +195,7 @@ public class BackEnd extends JPanel implements ActionListener {
         baseCodes.add("Yellow");
         baseCodes.add("Orange");
 
-        attemptsLeft = 3; //Will be changed to "newState.size() - 1"
+        attemptsLeft = 2; //Will be changed to "newState.size() - 1"
         newState = generateBalloons(randomIndices());
         gameOver = false;
 
@@ -203,8 +203,8 @@ public class BackEnd extends JPanel implements ActionListener {
 
     //Specifies the position of the current balloon to be painted.
     public void balloonAt(){
-        balloonPos = colourCodes.size();
-        if(balloonPos == 5){
+        balloonPosX = colourCodes.size();
+        if(balloonPosX == 5){
             repaint();
             colourCodes.clear(); //Try again after failed attempt.
             attemptsLeft--;
@@ -215,9 +215,10 @@ public class BackEnd extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e){ //Equivalent to main() in C++ i.e "entry point"
 
-        if(attemptsLeft == 0){
-            newGame();
-        }
+        // if(attemptsLeft == 0){
+            
+        //     newGame();
+        // }
 
         if(!gameOver && validInput){
 
