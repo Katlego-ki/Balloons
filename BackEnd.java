@@ -13,11 +13,9 @@ public class BackEnd extends JPanel implements ActionListener {
 
     static final int HEIGHT = 800;
     static final int WIDTH = 800;
-    static final int BALLOON_DIAMETER = 50; //OR change it to diameter!
     static int balloonPosX = 100;
-    static int balloonPosY = 200;
+    static int balloonPosY = 300;
     static final int BOARD_SIZE = 256;
-    final Font font = new Font("TimesRoman",Font.BOLD,50);
 
     final  Timer timer = new Timer(300,this);
     public static Random randVariable = new Random();
@@ -74,13 +72,14 @@ public class BackEnd extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
 
-        if(!gameOver && (colourCodes.size() > 0)){
-            //Paint light grey circles that shows balloon positions.
-            for(int i = 1; i <= 4; i++){
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(150*i,balloonPosY,100,100);
-            }
+        //Paint light grey circles that shows balloon positions.
+        for(int i = 1; i <= 4; i++){
+            g.setColor(Color.LIGHT_GRAY);
+            g.fillOval(150*i,balloonPosY,100,100);
+        }
 
+        if(!gameOver && (colourCodes.size() > 0)){
+            
             //Paint previously selected balloons.
             for (int i = 1; i < balloonPosX; i++){
                 switch (colourCodes.get(i-1)) {
@@ -132,17 +131,21 @@ public class BackEnd extends JPanel implements ActionListener {
 
             if(balloonPosX == 4){
 
-                balloonPosY += 100;
                 g.setColor(Color.BLACK);
-                g.setFont(font);
 
                 if(attemptsLeft > 0){
-                    String userNotice = String.format("You have %d attempts left", attemptsLeft);
+                    String userNotice = String.format("Attempts left : %d", attemptsLeft);
+                    String pressKey = "(press 'B' to begin your next attempt)";
+
+                    g.setFont(new Font("TimesRoman",Font.BOLD,50));
                     g.drawString(userNotice,(WIDTH - getFontMetrics(g.getFont()).stringWidth(userNotice))/2, 100 + HEIGHT/2 );
-                    
+                    g.setFont(new Font("TimesRoman",Font.ITALIC,25));
+                    g.drawString(pressKey,(WIDTH - getFontMetrics(g.getFont()).stringWidth(pressKey))/2, 150 + HEIGHT/2 );
+
                 } else{
                     gameOver = true;
                     String userNotice1 = "GAME OVER!";
+                    g.setFont(new Font("TimesRoman",Font.BOLD,50));
                     g.drawString(userNotice1,(WIDTH - getFontMetrics(g.getFont()).stringWidth(userNotice1))/2, 100 + HEIGHT/2 );
                 }
                 
