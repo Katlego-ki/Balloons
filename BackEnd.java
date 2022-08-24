@@ -130,8 +130,6 @@ public class BackEnd extends JPanel implements ActionListener {
 
             if(balloonPosX == 4){
 
-                g.setColor(Color.BLACK);
-
                 if((attemptsLeft > 0) || (colourCodes.equals(newState))){
 
                     if(colourCodes.equals(newState)){
@@ -158,6 +156,7 @@ public class BackEnd extends JPanel implements ActionListener {
                         String userNotice = String.format("Attempts left : %d", attemptsLeft);
                         String pressKey = "(press 'B' to begin your next attempt)";
 
+                        g.setColor(Color.BLACK);
                         g.setFont(new Font("TimesRoman", Font.BOLD, 50));
                         g.drawString(userNotice, (WIDTH - getFontMetrics(g.getFont()).stringWidth(userNotice)) / 2, 100 + HEIGHT / 2);
                         g.setFont(new Font("TimesRoman", Font.ITALIC, 25));
@@ -167,6 +166,8 @@ public class BackEnd extends JPanel implements ActionListener {
                 } else{
                     gameOver = true;
                     String youLost = "GAME OVER!";
+                    
+                    g.setColor(Color.BLACK);
                     g.setFont(new Font("TimesRoman",Font.BOLD,50));
                     g.drawString(youLost,(WIDTH - getFontMetrics(g.getFont()).stringWidth(youLost))/2, 100 + HEIGHT/2 );
 
@@ -187,6 +188,7 @@ public class BackEnd extends JPanel implements ActionListener {
         }
     }
 
+    
     public static int[] randomIndices(){
 
         int [] indices = new int[4];
