@@ -1,0 +1,16 @@
+body{
+    background-image: url('../images/Hot-Air-Balloon.jpg');
+    background-size: 100%;
+}
+
+.container{
+    position: relative;
+    border-radius: 20px;
+    margin: auto;
+    top: 300px;
+    padding : 10px;
+    height : 150px;
+    width: 50%;
+    background-color: rgb(100,100,100,0.5);
+    border: 1px solid black;
+}
