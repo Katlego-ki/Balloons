@@ -22,11 +22,3 @@ let balloonsField = (mode) => {
     
 
 }
-
-
-/*
-const newImg = document.createElement("img");
-    newImg.classList.add('cards'); //??
-    newImg.id = i;
-    newImg.src = "images/Card-Pictures/Unturned.png";
-    cardsGrid.appendChild(newImg);
