@@ -14,3 +14,21 @@ body{
     background-color: rgb(100,100,100,0.5);
     border: 1px solid black;
 }
+
+.emptyBall{
+    color: gray;
+    display: inline;
+
+}
+
+.container #1{
+    background-image: url();
+}
+
+.container #2{
+    background-image: url();
+}
+
+.container #3{
+    background-image: url();
+}
