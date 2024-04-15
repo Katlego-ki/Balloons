@@ -1,6 +1,9 @@
 body{
     background-image: url('../images/Hot-Air-Balloon.jpg');
     background-size: 100%;
+    backface-visibility: calc();
+    background-repeat: no-repeat;
+
 }
 
 .container{
@@ -13,22 +16,38 @@ body{
     width: 50%;
     background-color: rgb(100,100,100,0.5);
     border: 1px solid black;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+
 }
 
 .emptyBall{
     color: gray;
-    display: inline;
 
 }
 
-.container #1{
-    background-image: url();
+/*
+.container img#1, img#2, img#3{
+    background-image: url("../images/Hot-Air-Balloon.jpg");
+}
+*/
+
+.container img{
+    box-sizing: border-box;
+    display: flex;
+    border: 1px solid black;
+    height: 80%;
+    width : 20%;
+    border-radius: 10%;
+    margin: auto;
 }
 
-.container #2{
-    background-image: url();
+.container div{
+    aspect-ratio: 1/1;
+    margin: auto;
+    height: 80%;
+    border: 1px solid black;
+    border-radius: 50%;
 }
 
-.container #3{
-    background-image: url();
-}
